@@ -2,8 +2,10 @@
   "name": "ares",
   "version": "0.1.0",
   "description": "Social Media Nuker",
-  "main": "index.ts",
+  "main": "./dist/index.ts",
   "scripts": {
+    "dev": "tsc -w",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -11,9 +13,10 @@
     "url": "git+https://github.com/sr33/ares.git"
   },
   "keywords": [
-    "nuke",
-    "reddit",
-    "history"
+    "nuke reddit history",
+    "delete reddit comments",
+    "delete reddit posts",
+    "reddit"
   ],
   "author": "sr33",
   "license": "ISC",
