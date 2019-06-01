@@ -1,15 +1,19 @@
 {
     "compilerOptions": {
+        "moduleResolution": "node",
         "module": "commonjs",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
         "rootDir": "src",
-        "outDir": "dist"
+        "outDir": "dist",
+        "resolveJsonModule": true,
+        "allowJs": true
     },
     "include": [
         "src/**/*",
+        "src/manifest.json",
     ],
     "exclude": [
         "node_modules",
