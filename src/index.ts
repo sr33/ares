@@ -1,6 +1,8 @@
-import * as reddit from './reddit/index';
+import UI from './InjectableUI';
 
-function something () {
-    alert('nuke reddit history')
+function init() {
+    const ui = new UI();
+    ui.injectUI();
 }
-something();
+
+init();
