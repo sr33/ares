@@ -1,8 +1,11 @@
 import UI from './InjectableUI';
+import Profile from './Profile';
 
-function init() {
-    const ui = new UI();
-    ui.injectUI();
+const ui: UI = new UI();
+const profile: Profile = new Profile();
+ui.injectUI(onUIUpdate);
+
+function onUIUpdate() {
+    ui.updateCurrentAction('fetching your comments');
+    profile.fetchComments();
 }
-
-init();
