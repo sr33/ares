@@ -1,31 +1,31 @@
 import axios, {AxiosError} from 'axios';
-import Vue from 'vue';
 
 export default class UI {
     readonly templateAbsoluteUrl = chrome.runtime.getURL('template.html');
+    readonly body = document.getElementsByTagName('body')[0];
+
     public stats = {
         comments: 0,
         posts: 0,
     }
 
-    async injectUI() {
+    public async injectUI(cb: Function) {
         const html = await axios
         .get(this.templateAbsoluteUrl)
         .then((r) => {
             return r.data;
         })
         .catch((error: AxiosError) => {
-            console.error(`error -> ${error}`);
+            console.error(`error while trying to inject ui -> ${error}`);
         });
+        this.body.className = ''; // remove existing styles
+        this.body.innerHTML = html;
+        cb();
+    }
 
-        document.getElementsByTagName('body')[0].innerHTML = html;
-
-        // new Vue({
-        //     el: '#app',
-        //     data: {
-        //         stats: this.stats
-        //     }
-        // })
+    public updateCurrentAction(action: string) {
+        const el = document.getElementById('currentAction');
+        el.innerHTML = action;
     }
 
 }
