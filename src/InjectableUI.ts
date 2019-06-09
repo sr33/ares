@@ -1,12 +1,15 @@
 import axios, {AxiosError} from 'axios';
+import * as Vue from './vue';
+import Profile from './Profile';
 
 export default class UI {
     readonly templateAbsoluteUrl = chrome.runtime.getURL('template.html');
     readonly body = document.getElementsByTagName('body')[0];
+    public vueApp: Vue;
+    public profile: Profile;
 
-    public stats = {
-        comments: 0,
-        posts: 0,
+    constructor(profile: Profile) {
+        this.profile = profile;
     }
 
     public async injectUI(cb: Function) {
@@ -20,12 +23,19 @@ export default class UI {
         });
         this.body.className = ''; // remove existing styles
         this.body.innerHTML = html;
+        this.mountVueApp();
         cb();
     }
 
-    public updateCurrentAction(action: string) {
-        const el = document.getElementById('currentAction');
-        el.innerHTML = action;
+    private mountVueApp() {
+        this.vueApp = new Vue({
+            el: '#nrhApp',
+            data: {
+                stats: JSON.stringify(this.profile.stats),
+            },
+            mounted: () => {
+                console.log("Nuke Reddit History Mounted");
+            }
+        });
     }
-
 }

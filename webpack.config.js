@@ -18,6 +18,7 @@ function modify(buffer) {
 }
 
 module.exports = {
+    mode: "production",
     devtool: 'inline-source-map',
     entry: [path.join(__dirname, src + 'index.ts')],
     output: {
@@ -44,20 +45,21 @@ module.exports = {
                transform (content, path) {
                    return modify(content)
                }
-            }
-        ]),
-        new CopyWebpackPlugin([
+            },
             {
-               from: "./src/popup.html",
-               to: "./popup.html", 
-            }
-        ]),
-        new CopyWebpackPlugin([
+                from: "./src/popup.html",
+                to: "./popup.html", 
+            },
             {
                 from: "./src/template.html",
                 to: "./template.html",
+            },
+            {
+                from: "./src/vue.js",
+                to: "./vue.js",
             }
-        ])
+
+        ]),
     ]
 
 };

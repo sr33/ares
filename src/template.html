@@ -1,8 +1,10 @@
-<div id="NRH-APP">
+<script src="./vue.js"></script>
+
+<div id="nrhApp">
     <h1 class="text-center">Nuke Reddit History</h1>
-    <span id="currentAction">
-        
-    </span>
+    <div class="text-center font-size-2x">
+        <pre>{{stats}}</pre>
+    </div>
 </div>
 
 <style>
@@ -22,5 +24,9 @@
 
     .text-center {
         text-align: center;
+    }
+
+    .font-size-2x {
+        font-size: 200%;
     }
 </style>
