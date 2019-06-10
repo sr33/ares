@@ -6,11 +6,7 @@ export default class UI {
     readonly templateAbsoluteUrl = chrome.runtime.getURL('template.html');
     readonly body = document.getElementsByTagName('body')[0];
     public vueApp: Vue;
-    public profile: Profile;
-
-    constructor(profile: Profile) {
-        this.profile = profile;
-    }
+    public profile: Profile = new Profile();
 
     public async injectUI(cb: Function) {
         const html = await axios
@@ -31,7 +27,7 @@ export default class UI {
         this.vueApp = new Vue({
             el: '#nrhApp',
             data: {
-                stats: JSON.stringify(this.profile.stats),
+                profile: this.profile,
             },
             mounted: () => {
                 console.log("Nuke Reddit History Mounted");
