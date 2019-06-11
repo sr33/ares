@@ -11,7 +11,7 @@
     },
     "permissions": [
       "activeTab",
-      "https://reddit.com/user/*"
+      "https://*.reddit.com/"
     ],
     "content_scripts": [
       {

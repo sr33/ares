@@ -1,12 +1,9 @@
-import UI from './InjectableUI';
+import UI from './UI';
 import Profile from './Profile';
 
 const ui: UI = new UI();
-ui.injectUI(onUIUpdate);
+ui.injectUI(onUiInject);
 
-function onUIUpdate() {
-    ui.profile.fetchComments();
-    if (ui.profile.doCommentsExist) {
-        // overwrite & delete comments
-    }
+function onUiInject() {
+    ui.profile.setup();
 }

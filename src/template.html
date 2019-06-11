@@ -1,9 +1,27 @@
 <script src="./vue.js"></script>
 
 <div id="nrhApp">
-    <h1 class="text-center">Nuke Reddit History</h1>
-    <div class="font-size-2x">
-        <pre>{{profile.stats}}</pre>
+    
+    <h1 class="text-center nuke-color">Nuke Reddit History</h1>
+    
+    <!-- <div class="font-size-2x text-center">
+        Please do not use reddit while this extension is running!
+    </div> -->
+
+    <div class="font-size-2x text-center">
+        username: {{profile.userName}}
+        
+        <div>
+            <br>
+            <span class="nuke-color">{{profile.currentComment.action}}</span>
+            <br>
+            `{{profile.currentComment.comment.body}}`
+            <br>
+            to
+            <br>
+            `{{profile.currentComment.comment.editedText}}`
+        </div>
+
     </div>
 </div>
 
@@ -19,6 +37,9 @@
 
     h1 {
         font-size: 300%;
+    }
+
+    .nuke-color {
         color: #fa8231;
     }
 
