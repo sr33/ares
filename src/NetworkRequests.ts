@@ -35,7 +35,7 @@ export let networkRequests: any = {
             if (e.response.status === 401) {
                 alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
             }
-            if (e.response) {
+            else if (e.response) {
                 // 2xx + codes
                 alert(`Fetching comments failed with Error Code ${e.response.status}`)
             }
@@ -52,21 +52,21 @@ export let networkRequests: any = {
             if (e.response.status === 401) {
                 alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
             }
-            if (e.response) {
+            else if (e.response) {
                 // 2xx + codes
                 alert(`overwriting comment failed with Error Code ${e.response.status}`)
             }
         });
     },
-    deleteComment: (data: any) => {
+    deleteComment: (data: any, uh: string) => {
         return REDDIT_API
-        .post('api/delete_collection', data)
+        .post('api/del', qs.stringify(data), {headers: {'X-Modhash': uh}})
         .then(r => r.data)
         .catch((e: AxiosError) => {
             if (e.response.status === 401) {
                 alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
             }
-            if (e.response) {
+            else if (e.response) {
                 // 2xx + codes
                 alert(`deleting comment failed with Error Code ${e.response.status}`)
             }

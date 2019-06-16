@@ -1,5 +1,5 @@
 import axios, {AxiosError} from 'axios';
-import * as Vue from './vue';
+import * as Vue from './static_resources/vue';
 import Profile from './Profile';
 
 export default class UI {
@@ -24,13 +24,14 @@ export default class UI {
     }
 
     private mountVueApp() {
+        // @ts-ignore
         this.vueApp = new Vue({
             el: '#nrhApp',
             data: {
                 profile: this.profile,
             },
             mounted: () => {
-                console.log("Nuke Reddit History Mounted");
+                console.log("--: Nuke Reddit History initiated :--");
             }
         });
     }

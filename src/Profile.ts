@@ -1,5 +1,6 @@
 import { networkRequests } from './NetworkRequests';
 import * as utils from './utils.js';
+import { AxiosPromise, AxiosError } from 'axios';
 
 export default class Profile {
     private userName: string = '..loading';
@@ -19,22 +20,47 @@ export default class Profile {
     }
 
     public async overwriteAndDelComments() {
-        let num: number = 0;
+        await this.fetchComments();
         if (this.comments && this.comments.length > 0) {
             for (let comment of this.comments) {
                 this.currentComment = {
-                    action: "Editing Comment",
+                    action: "Editing Comment..",
                     comment
                 };
-                const r = await networkRequests.getUserDetails();
-                console.log(r.data.modhash);
-                comment.editComment(r.data.modhash, this.userName);
+                await comment.editComment(this.modhash, this.userName)
+                .then(async r => {
+                    console.log('edit response r is ', r)
+                    comment.isEdited = r.data.success;
+                    if (comment.isEdited) {
+                        this.currentComment.action = "Deleting Comment..";
+                        await comment.deleteComment(this.modhash)
+                        .then((r: any) => {
+                            console.log('delete response r is ', r)
+                            comment.isDeleted = r.data.success;
+                        })
+                        .catch((e: AxiosError) => {
+                            if (e.response.status === 403) {
+                                // modhash expired
+                                this.setup();
+                            }
+                        });
+                    }
+                })
+                .catch((e: AxiosError) => {
+                    if (e.response.status === 403) {
+                        // modhash expired
+                        this.setup();
+                    }
+                });
+                // wait two seconds to respect reddit api rules.
+                // todo: count x-remaining headers to automate this better
+                this.currentComment.action = "Performing checks..."
                 await utils.resolveAfter2Seconds();
-                num++;
-                if (num === 2) break;
             }
+            this.setup();
         }
         else {
+            this.currentComment.action = "All comments overwritten & deleted. If you think this was done in error, press feedback button below";
             alert(`No more comments found.`);
         }
     }
@@ -43,8 +69,7 @@ export default class Profile {
         const r = await networkRequests.getUserDetails();
         this.userName = r.data.name;
         this.modhash = r.data.modhash;
-        await this.fetchComments();
-        this.overwriteAndDelComments()
+        this.overwriteAndDelComments();
     }
     
     public async fetchComments() {
@@ -75,27 +100,26 @@ class Comment {
         this.subreddit = redditThing.data.subreddit;
     }
 
-    public editComment(uh: string, username: string) {
-        console.log('editing comment', this);
-        const r = networkRequests.editComment({
+    public editComment(uh: string, username: string): AxiosPromise {
+        const payload = {
             thing_id: this.thing_id,
             text: this.editedText,
             id: `#form-${this.thing_id}`,
             r: this.subreddit,
             uh,
             renderstyle: 'html',
-        }, uh);
-        if (r.data.status === '200') {
-            this.isEdited = true;
-        }
+        };
+        return networkRequests.editComment(payload, uh);
     }
 
-    public deleteComment() {
-        const r = networkRequests.deleteComment({
-
-        });
-        if (r.data.status === '200') {
-            this.isDeleted = true;
-        }
+    public deleteComment(uh: string) {
+        const payload = {
+            id: this.thing_id,
+            executed: 'deleted',
+            uh,
+            renderstyle: 'html'
+        };
+        return networkRequests.deleteComment(payload, uh);
     }
+
 }
