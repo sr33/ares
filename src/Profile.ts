@@ -10,15 +10,7 @@ export default class Profile {
         action: '..loading',
         comment: ''
     }; // current comment being worked on
-
-    public get stats() {
-        return {
-            username: this.userName,
-            commentsFetched: this.comments.length,
-            commentsDeleted: 0,
-        }
-    }
-
+    
     public async overwriteAndDelComments() {
         await this.fetchComments();
         if (this.comments && this.comments.length > 0) {
@@ -29,28 +21,22 @@ export default class Profile {
                 };
                 await comment.editComment(this.modhash, this.userName)
                 .then(async r => {
-                    console.log('edit response r is ', r)
                     comment.isEdited = r.data.success;
                     if (comment.isEdited) {
                         this.currentComment.action = "Deleting Comment..";
                         await comment.deleteComment(this.modhash)
                         .then((r: any) => {
-                            console.log('delete response r is ', r)
                             comment.isDeleted = r.data.success;
                         })
                         .catch((e: AxiosError) => {
-                            if (e.response.status === 403) {
-                                // modhash expired
-                                this.setup();
-                            }
+                            console.log(`caught a 403 whilst editing...`);
+                            (e.response.status === 403)? this.setup(): '';
                         });
                     }
                 })
                 .catch((e: AxiosError) => {
-                    if (e.response.status === 403) {
-                        // modhash expired
-                        this.setup();
-                    }
+                    console.log(`caught a 403 whilst editing...`);
+                    (e.response.status === 403)? this.setup(): '';
                 });
                 // wait two seconds to respect reddit api rules.
                 // todo: count x-remaining headers to automate this better

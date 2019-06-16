@@ -42,35 +42,10 @@ export let networkRequests: any = {
         });
     },
     editComment: (data: any, uh:string) => {
-        return REDDIT_API
-        .post('api/editusertext', qs.stringify(data), {headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Modhash': uh,
-        }})
-        .then(r => r.data)
-        .catch((e: AxiosError) => {
-            if (e.response.status === 401) {
-                alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
-            }
-            else if (e.response) {
-                // 2xx + codes
-                alert(`overwriting comment failed with Error Code ${e.response.status}`)
-            }
-        });
+        return REDDIT_API.post('api/editusertext', qs.stringify(data), {headers: {'X-Modhash': uh,}});
     },
     deleteComment: (data: any, uh: string) => {
-        return REDDIT_API
-        .post('api/del', qs.stringify(data), {headers: {'X-Modhash': uh}})
-        .then(r => r.data)
-        .catch((e: AxiosError) => {
-            if (e.response.status === 401) {
-                alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
-            }
-            else if (e.response) {
-                // 2xx + codes
-                alert(`deleting comment failed with Error Code ${e.response.status}`)
-            }
-        });
+        return REDDIT_API.post('api/del', qs.stringify(data), {headers: {'X-Modhash': uh}});
     }
 
 }
