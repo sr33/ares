@@ -14,40 +14,41 @@ export default class Profile {
     public async overwriteAndDelComments() {
         await this.fetchComments();
         if (this.comments && this.comments.length > 0) {
+            let num: number = 1;
             for (let comment of this.comments) {
                 this.currentComment = {
-                    action: "Editing Comment..",
+                    action: "Editing Comment...",
                     comment
                 };
-                await comment.editComment(this.modhash, this.userName)
-                .then(async r => {
-                    comment.isEdited = r.data.success;
-                    if (comment.isEdited) {
-                        this.currentComment.action = "Deleting Comment..";
-                        await comment.deleteComment(this.modhash)
-                        .then((r: any) => {
-                            comment.isDeleted = r.data.success;
-                        })
-                        .catch((e: AxiosError) => {
-                            console.log(`caught a 403 whilst editing...`);
-                            (e.response.status === 403)? this.setup(): '';
-                        });
-                    }
-                })
-                .catch((e: AxiosError) => {
-                    console.log(`caught a 403 whilst editing...`);
-                    (e.response.status === 403)? this.setup(): '';
-                });
+                console.log('\n\n\nediting comment', num)
+                await this.overWriteComment(comment);
+                if (!comment.isEdited) {
+                    console.log('failed editing comment')
+                    break;
+                } else {
+                    console.log('comment finished editing')
+                }
+                this.currentComment.action = "Deleting Comment..."
+                console.log('deleting comment');
+                await this.deleteComment(comment);
+
+                if (!comment.isDeleted) {
+                    console.log('failed deleting comment')
+                    break;
+                } else {
+                    console.log('comment finished deleting')
+                }
                 // wait two seconds to respect reddit api rules.
                 // todo: count x-remaining headers to automate this better
+                num++;
                 this.currentComment.action = "Performing checks..."
                 await utils.resolveAfter2Seconds();
             }
             this.setup();
         }
         else {
-            this.currentComment.action = "All comments overwritten & deleted. If you think this was done in error, press feedback button below";
-            alert(`No more comments found.`);
+            this.currentComment.action = "All comments overwritten & deleted. Feedback -> r/NukeRedditHistory";
+            alert(`No more comments found. Nuke Reddit History tried it's best to overwrite and delete comments.\nFor feedback or error resolution, please start a thread on /r/NukeRedditHistory`);
         }
     }
 
@@ -59,6 +60,8 @@ export default class Profile {
     }
     
     public async fetchComments() {
+        console.log('\n\nfetching comments')
+        this.comments = [];
         const r = await networkRequests.getComments(this.userName);
         for (let rc of r.data.children) {
             const c = new Comment(rc);
@@ -66,6 +69,54 @@ export default class Profile {
         }
 
     }
+
+    private async overWriteComment(comment: Comment): Promise<any> {
+        try {
+            const response = await comment.editComment(this.modhash, this.userName);
+            comment.isEdited = response.data.success;
+            return response;
+        } catch (error) {
+            if (error.response) {
+                /*
+                 * The request was made and the server responded with a
+                 * status code that falls out of the range of 2xx
+                 */
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else if (error.request) {
+                console.log(error.request);
+            } else {
+                console.log('An Improper Request was sent to reddit. Please post this on /r/NukeRedditHistory for more help', error.message);
+            }
+            console.log(error);
+        }
+    }
+
+    private async deleteComment(comment: Comment): Promise<any> {
+        try {
+            const response = await comment.deleteComment(this.modhash);
+            comment.isDeleted = true; // reddit doesn't respond with success flag on delete.
+            return response;
+        } catch (error) {
+            if (error.response) {
+                /*
+                 * The request was made and the server responded with a
+                 * status code that falls out of the range of 2xx
+                 */
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else if (error.request) {
+                alert('Please Check your internet connection');
+                console.log(error.request);
+            } else {
+                console.log('An Improper Request was sent to reddit. Please post this on /r/NukeRedditHistory for more help', error.message);
+            }
+            console.log(error);
+        }
+    }
+
 }
 
 class Comment {
