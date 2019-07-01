@@ -3,12 +3,12 @@ import * as Vue from './static_resources/vue';
 import Profile from './Profile';
 
 export default class UI {
-    readonly templateAbsoluteUrl = chrome.runtime.getURL('template.html');
+    readonly templateAbsoluteUrl = chrome.runtime.getURL('/static_resources/template.html');
     readonly body = document.getElementsByTagName('body')[0];
     public vueApp: Vue;
     public profile: Profile = new Profile();
 
-    public async injectUI(cb: Function) {
+    public async injectUI() {
         const html = await axios
         .get(this.templateAbsoluteUrl)
         .then((r) => {
@@ -20,7 +20,7 @@ export default class UI {
         this.body.className = ''; // remove existing styles
         this.body.innerHTML = html;
         this.mountVueApp();
-        cb();
+        this.profile.setup();
     }
 
     private mountVueApp() {

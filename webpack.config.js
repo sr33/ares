@@ -23,7 +23,7 @@ module.exports = {
     entry: [path.join(__dirname, src + 'index.ts')],
     output: {
         path: path.join(__dirname, './dist/'),
-        filename: 'extension.js'
+        filename: 'Nuke-Reddit-History.js'
     },
     resolve: {
         extensions: [ '.tsx', '.ts', '.js', '.json' ]
@@ -47,18 +47,9 @@ module.exports = {
                }
             },
             {
-                from: "./src/popup.html",
-                to: "./popup.html", 
+                from: "./src/static_resources/",
+                to: "./static_resources/", 
             },
-            {
-                from: "./src/template.html",
-                to: "./template.html",
-            },
-            {
-                from: "./src/vue.js",
-                to: "./vue.js",
-            }
-
         ]),
     ]
 
