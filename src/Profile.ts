@@ -14,33 +14,23 @@ export default class Profile {
     public async overwriteAndDelComments() {
         await this.fetchComments();
         if (this.comments && this.comments.length > 0) {
-            let num: number = 1;
             for (let comment of this.comments) {
                 this.currentComment = {
                     action: "Editing Comment...",
                     comment
                 };
-                console.log('\n\n\nediting comment', num)
                 await this.overWriteComment(comment);
                 if (!comment.isEdited) {
-                    console.log('failed editing comment')
                     break;
-                } else {
-                    console.log('comment finished editing')
                 }
                 this.currentComment.action = "Deleting Comment..."
-                console.log('deleting comment');
                 await this.deleteComment(comment);
 
                 if (!comment.isDeleted) {
-                    console.log('failed deleting comment')
                     break;
-                } else {
-                    console.log('comment finished deleting')
                 }
                 // wait two seconds to respect reddit api rules.
                 // todo: count x-remaining headers to automate this better
-                num++;
                 this.currentComment.action = "Performing checks..."
                 await utils.resolveAfter2Seconds();
             }
@@ -60,7 +50,6 @@ export default class Profile {
     }
     
     public async fetchComments() {
-        console.log('\n\nfetching comments')
         this.comments = [];
         const r = await networkRequests.getComments(this.userName);
         for (let rc of r.data.children) {
@@ -108,7 +97,6 @@ export default class Profile {
                 console.log(error.response.status);
                 console.log(error.response.headers);
             } else if (error.request) {
-                alert('Please Check your internet connection');
                 console.log(error.request);
             } else {
                 console.log('An Improper Request was sent to reddit. Please post this on /r/NukeRedditHistory for more help', error.message);
