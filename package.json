@@ -4,8 +4,8 @@
   "description": "Social Media Nuker",
   "main": "./dist/index.ts",
   "scripts": {
-    "dev": "tsc -w",
-    "build": "tsc",
+    "dev": "webpack -w",
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +23,18 @@
   "bugs": {
     "url": "https://github.com/sr33/ares/issues"
   },
-  "homepage": "https://github.com/sr33/ares#readme"
+  "homepage": "https://github.com/sr33/ares#readme",
+  "devDependencies": {
+    "@types/chrome": "0.0.86",
+    "copy-webpack-plugin": "^5.0.3",
+    "html-loader": "^0.5.5",
+    "ts-loader": "^6.0.1",
+    "typescript": "^3.5.1",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "qs": "^6.7.0"
+  }
 }
