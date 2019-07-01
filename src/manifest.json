@@ -3,10 +3,15 @@
   
     "name": "Nuke Reddit History",
     "description": "To overwrite & delete all your comments on reddit, click this extension's icon next to your address bar.",
-    "version": "1.2",
+    "version": "2.0",
+    "icons": {
+      "16": "/static_resources/icons/icon16.png",
+      "48": "/static_resources/icons/icon48.png",
+      "128": "/static_resources/icons/icon128.png"
+    },
   
     "browser_action": {
-      "default_popup": "popup.html"
+      "default_popup": "/static_resources/popup.html"
   
     },
     "permissions": [
@@ -18,11 +23,11 @@
         "matches": ["https://old.reddit.com/user/*"],
         "include_globs": ["https://old.reddit.com/user/*/*/*?efe2d409a42=f9ce4f81e6326*"],
         "run_at": "document_idle",
-        "js": ["extension.js"]
+        "js": ["Nuke-Reddit-History.js"]
       }
     ],
     "web_accessible_resources": [
-      "template.html"
+      "/static_resources/template.html"
     ]
   }
   
