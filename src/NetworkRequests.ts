@@ -44,7 +44,7 @@ export let networkRequests: any = {
     editComment: (data: any, uh:string) => {
         return REDDIT_API.post('api/editusertext', qs.stringify(data), {headers: {'X-Modhash': uh,}});
     },
-    deleteComment: (data: any, uh: string) => {
+    deleteRedditThing: (data: any, uh: string) => {
         return REDDIT_API.post('api/del', qs.stringify(data), {headers: {'X-Modhash': uh}});
     },
     getPosts: (username: string): AxiosPromise => {
