@@ -14,12 +14,14 @@
         <div>
             <br>
             <span class="nuke-color">{{profile.currentComment.action}}</span>
-            <br>
-            `{{profile.currentComment.comment.body}}`
-            <br>
-            to
-            <br>
-            `{{profile.currentComment.comment.editedText}}`
+            <span v-if="profile.currentComment.comment">
+                <br>
+                `{{profile.currentComment.comment.body}}`
+                <br>
+                to
+                <br>
+                `{{profile.currentComment.comment.editedText}}`
+            </span>
         </div>
 
     </div>
