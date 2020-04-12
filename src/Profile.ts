@@ -60,6 +60,7 @@ export default class Profile {
     }
 
     public async setup() {
+        console.log(`Sort Order -> ${this.sort[this.sortIndex]}`)
         if (this.sortIndex >= this.sort.length) {
             this.currentComment.action = `All ${this.mode} deleted!`
             alert(`Nuke Reddit History tried it's best to delete all ${this.mode}.\nFor Error resolution, please make a post on the subreddit r/NukeRedditHistory`);
