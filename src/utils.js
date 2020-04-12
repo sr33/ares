@@ -50,10 +50,29 @@ export function generateRandomPhrase() {
     return generate();
 }
 
+/**
+ * @function resolveAfter2Seconds: Simulates sleep() for 2 seconds and returns a promise.
+ * to be used in conjunction with await.
+ * Primary purpose is to respect reddit's API ratelimits (60 per minute)
+ */
 export function resolveAfter2Seconds() {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve('resolved');
       }, 2000);
     });
-  }
+}
+
+export function onNetworkError(error) {
+    if (error.response) {
+        // if error code is above 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+    } else if (error.request) {
+        console.log(error.request);
+    } else {
+        console.log('An Improper Request was sent to reddit. Please post this on /r/NukeRedditHistory for more help', error.message);
+    }
+    console.log(error);
+}

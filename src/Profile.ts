@@ -5,6 +5,7 @@ import { AxiosPromise, AxiosError } from 'axios';
 export default class Profile {
     private userName: string = '..loading';
     private comments: Comment[] = [];
+    private posts: Post[] = [];
     private modhash: string = '';
     private currentComment: any = {
         action: '..loading',
@@ -29,8 +30,6 @@ export default class Profile {
                 if (!comment.isDeleted) {
                     break;
                 }
-                // wait two seconds to respect reddit api rules.
-                // todo: count x-remaining headers to automate this better
                 this.currentComment.action = "Performing checks..."
                 await utils.resolveAfter2Seconds();
             }
@@ -46,7 +45,12 @@ export default class Profile {
         const r = await networkRequests.getUserDetails();
         this.userName = r.data.name;
         this.modhash = r.data.modhash;
-        this.overwriteAndDelComments();
+        if (document.URL.includes('posts')) {
+            this.deletePosts();
+        }
+        else if (document.URL.includes('comments')) {
+            this.overwriteAndDelComments();
+        }
     }
     
     public async fetchComments() {
@@ -56,7 +60,6 @@ export default class Profile {
             const c = new Comment(rc);
             this.comments.push(c);
         }
-
     }
 
     private async overWriteComment(comment: Comment): Promise<any> {
@@ -64,21 +67,8 @@ export default class Profile {
             const response = await comment.editComment(this.modhash, this.userName);
             comment.isEdited = response.data.success;
             return response;
-        } catch (error) {
-            if (error.response) {
-                /*
-                 * The request was made and the server responded with a
-                 * status code that falls out of the range of 2xx
-                 */
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('An Improper Request was sent to reddit. Please post this on /r/NukeRedditHistory for more help', error.message);
-            }
-            console.log(error);
+        } catch (e) {
+            utils.onNetworkError(e);
         }
     }
 
@@ -87,28 +77,53 @@ export default class Profile {
             const response = await comment.deleteComment(this.modhash);
             comment.isDeleted = true; // reddit doesn't respond with success flag on delete.
             return response;
-        } catch (error) {
-            if (error.response) {
-                /*
-                 * The request was made and the server responded with a
-                 * status code that falls out of the range of 2xx
-                 */
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('An Improper Request was sent to reddit. Please post this on /r/NukeRedditHistory for more help', error.message);
+        } catch (e) {
+            utils.onNetworkError(e);
+        }
+    }
+
+    private async deletePosts() {
+        await this.fetchPosts();
+        if (this.posts && this.posts.length > 0) {
+            for (let p of this.posts) {
+                this.currentComment = {
+                    action: `Deleting Post titled ${p.title}\nposted to the subreddit: ${p.subreddit}`
+                }
+                await this.deletePost(p);
+                this.currentComment.action = `Performing Checks....`;
+                await utils.resolveAfter2Seconds();
             }
-            console.log(error);
+            this.setup();
+        } else {
+            this.currentComment.action = "All Posts were deleted. Feedback -> r/NukeRedditHistory";
+            alert(`No more posts found. Nuke Reddit History tried it's best to delete all posts.\nFor feedback or error resolution, please start a thread on /r/NukeRedditHistory`);
+        }
+        
+    }
+
+    public async fetchPosts() {
+        this.posts = [];
+        const r = await networkRequests.getPosts(this.userName);
+        for (let rp of r.data.children) {
+            const p = new Post(rp);
+            this.posts.push(p);
+        }
+    }
+
+    private async deletePost(post: Post): Promise<any> {
+        try {
+            const r = await post.delete(this.modhash);
+            post.isDeleted = true;
+            return r;
+        } catch (e) {
+            utils.onNetworkError(e);
         }
     }
 
 }
 
 class Comment {
-    private redditThing: any;
+    private redditThing: any; // raw comment object
     private id: string;
     private thing_id: string;
     private body: string;
@@ -144,7 +159,31 @@ class Comment {
             uh,
             renderstyle: 'html'
         };
-        return networkRequests.deleteComment(payload, uh);
+        return networkRequests.deleteRedditThing(payload, uh);
+    }
+
+}
+
+class Post {
+    private thing_id: string;
+    public subreddit: string;
+    public isDeleted: boolean = false;
+    public title: string;
+
+    constructor(private redditThing: any) {
+        this.thing_id = this.redditThing.data.name;
+        this.subreddit = this.redditThing.data.subreddit;
+        this.title = this.redditThing.data.title;
+    }
+
+    public delete(uh: string) {
+        const payload = {
+            id: this.thing_id,
+            executed: 'deleted',
+            uh,
+            renderstyle: 'html',
+        };
+        return networkRequests.deleteRedditThing(payload, uh);
     }
 
 }

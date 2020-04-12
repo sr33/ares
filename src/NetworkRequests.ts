@@ -44,8 +44,21 @@ export let networkRequests: any = {
     editComment: (data: any, uh:string) => {
         return REDDIT_API.post('api/editusertext', qs.stringify(data), {headers: {'X-Modhash': uh,}});
     },
-    deleteComment: (data: any, uh: string) => {
+    deleteRedditThing: (data: any, uh: string) => {
         return REDDIT_API.post('api/del', qs.stringify(data), {headers: {'X-Modhash': uh}});
-    }
+    },
+    getPosts: (username: string): AxiosPromise => {
+        return REDDIT_API.get(`user/${username}/submitted/.json`)
+        .then(r => r.data)
+        .catch((e: AxiosError) => {
+            if (e.response.status === 401) {
+                alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
+            }
+            else if (e.response) {
+                // 2xx + codes
+                alert(`Fetching posts failed with Error Code ${e.response.status}`)
+            }
+        });
+    },
 
 }
