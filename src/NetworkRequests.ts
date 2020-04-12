@@ -7,7 +7,7 @@ const config: AxiosRequestConfig = {
     headers: {
         'Accept': '*/*',
     },
-    baseURL: 'https://reddit.com/'
+    baseURL: 'https://www.reddit.com/'
 }
 
 const REDDIT_API: AxiosInstance = axios.create(config);
