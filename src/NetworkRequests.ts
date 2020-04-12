@@ -7,7 +7,7 @@ const config: AxiosRequestConfig = {
     headers: {
         'Accept': '*/*',
     },
-    baseURL: 'https://old.reddit.com/'
+    baseURL: 'https://reddit.com/'
 }
 
 const REDDIT_API: AxiosInstance = axios.create(config);
@@ -18,13 +18,7 @@ export let networkRequests: any = {
         .get('api/me.json')
         .then(r => r.data)
         .catch((e: AxiosError) => {
-            if (e.response.status === 401) {
-                alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
-            }
-            if (e.response) {
-                // 2xx + codes
-                alert(`Fetching User Information failed with Error Code ${e.response.status}`)
-            }
+            console.log(`Fetching User Information failed with Error ${e}`)
         })
     },
     getComments: (username: string): AxiosPromise => {
@@ -32,13 +26,7 @@ export let networkRequests: any = {
         .get(`user/${username}/comments/.json`)
         .then(r => r.data)
         .catch((e: AxiosError) => {
-            if (e.response.status === 401) {
-                alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
-            }
-            else if (e.response) {
-                // 2xx + codes
-                alert(`Fetching comments failed with Error Code ${e.response.status}`)
-            }
+            console.log(`Fetching comments failed with Error ${e}`)
         });
     },
     editComment: (data: any, uh:string) => {
@@ -51,13 +39,7 @@ export let networkRequests: any = {
         return REDDIT_API.get(`user/${username}/submitted/.json`)
         .then(r => r.data)
         .catch((e: AxiosError) => {
-            if (e.response.status === 401) {
-                alert(`You are not logged in to your reddit account. Please login and try again: Error Code ${e.response.status}`)
-            }
-            else if (e.response) {
-                // 2xx + codes
-                alert(`Fetching posts failed with Error Code ${e.response.status}`)
-            }
+            console.log(`Fetching posts failed with Error Code ${e}`)
         });
     },
 
