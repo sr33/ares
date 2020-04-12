@@ -26,7 +26,7 @@
   "homepage": "https://github.com/sr33/ares#readme",
   "devDependencies": {
     "@types/chrome": "0.0.86",
-    "copy-webpack-plugin": "^5.0.3",
+    "copy-webpack-plugin": "^5.1.1",
     "html-loader": "^0.5.5",
     "ts-loader": "^6.0.1",
     "typescript": "^3.5.1",
