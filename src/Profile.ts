@@ -69,7 +69,7 @@ export default class Profile {
         const r = await networkRequests.getUserDetails();
         this.userName = r.data.name;
         this.modhash = r.data.modhash;
-        if (document.URL.includes('posts')) {
+        if (document.URL.includes('submitted')) {
             this.mode = 'posts';
             this.deletePosts(this.sort[this.sortIndex]);
         }
@@ -120,7 +120,7 @@ export default class Profile {
             if (!p.isDeleted) {
                 // repeat current sort order on failure
                 this.deletePosts(queryString);
-                 break;
+                break;
             }
             await utils.resolveAfter2Seconds();
         }
