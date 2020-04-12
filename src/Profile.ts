@@ -10,52 +10,77 @@ export default class Profile {
     private currentComment: any = {
         action: '..loading',
         comment: ''
-    }; // current comment being worked on
+    };
+    private mode!: 'posts' | 'comments';
+    private sortIndex: number = 0;
+    private sort = [
+        '?sort=new',
+        '?sort=hot',
+        '?sort=controversial',
+        '?sort=controversial&t=hour',
+        '?sort=controversial&t=day',
+        '?sort=controversial&t=week',
+        '?sort=controversial&t=month',
+        '?sort=controversial&t=year',
+        '?sort=controversial&t=all',
+        '?sort=top',
+        '?sort=top&t=hour',
+        '?sort=top&t=day',
+        '?sort=top&t=week',
+        '?sort=top&t=month',
+        '?sort=top&t=year',
+        '?sort=top&t=all',
+    ]
     
-    public async overwriteAndDelComments() {
-        await this.fetchComments();
-        if (this.comments && this.comments.length > 0) {
-            for (let comment of this.comments) {
-                this.currentComment = {
-                    action: "Editing Comment...",
-                    comment
-                };
-                await this.overWriteComment(comment);
-                if (!comment.isEdited) {
-                    break;
-                }
-                this.currentComment.action = "Deleting Comment..."
-                await this.deleteComment(comment);
-
-                if (!comment.isDeleted) {
-                    break;
-                }
-                this.currentComment.action = "Performing checks..."
-                await utils.resolveAfter2Seconds();
+    public async overwriteAndDelComments(queryString: string) {
+        await this.fetchComments(queryString);
+        for (let comment of this.comments) {
+            this.currentComment = {
+                action: "Editing Comment...",
+                comment
+            };
+            await this.overWriteComment(comment);
+            if (!comment.isEdited) {
+                // repeat same sort order on failure
+                this.overwriteAndDelComments(queryString);
+                break;
             }
+            this.currentComment.action = "Deleting Comment..."
+            await this.deleteComment(comment);
+
+            if (!comment.isDeleted) {
+                // repeat same sort order on failure
+                this.overwriteAndDelComments(queryString);
+                break;
+            }
+            this.currentComment.action = "Performing checks..."
+            await utils.resolveAfter2Seconds();
             this.setup();
-        }
-        else {
-            this.currentComment.action = "All comments overwritten & deleted. Feedback -> r/NukeRedditHistory";
-            alert(`No more comments found. Nuke Reddit History tried it's best to overwrite and delete comments.\nFor feedback or error resolution, please start a thread on /r/NukeRedditHistory`);
         }
     }
 
     public async setup() {
+        if (this.sortIndex >= this.sort.length) {
+            this.currentComment.action = `All ${this.mode} deleted!`
+            alert(`Nuke Reddit History tried it's best to delete all ${this.mode}.\nFor Error resolution, please make a post on the subreddit r/NukeRedditHistory`);
+        }
         const r = await networkRequests.getUserDetails();
         this.userName = r.data.name;
         this.modhash = r.data.modhash;
         if (document.URL.includes('posts')) {
-            this.deletePosts();
+            this.mode = 'posts';
+            this.deletePosts(this.sort[this.sortIndex]);
         }
         else if (document.URL.includes('comments')) {
-            this.overwriteAndDelComments();
+            this.mode = 'comments';
+            this.overwriteAndDelComments(this.sort[this.sortIndex]);
         }
+        this.sortIndex++;        
     }
     
-    public async fetchComments() {
+    public async fetchComments(queryString: string) {
         this.comments = [];
-        const r = await networkRequests.getComments(this.userName);
+        const r = await networkRequests.getComments(this.userName, queryString);
         for (let rc of r.data.children) {
             const c = new Comment(rc);
             this.comments.push(c);
@@ -82,28 +107,27 @@ export default class Profile {
         }
     }
 
-    private async deletePosts() {
-        await this.fetchPosts();
-        if (this.posts && this.posts.length > 0) {
-            for (let p of this.posts) {
-                this.currentComment = {
-                    action: `Deleting Post titled ${p.title}\nposted to the subreddit: ${p.subreddit}`
-                }
-                await this.deletePost(p);
-                this.currentComment.action = `Performing Checks....`;
-                await utils.resolveAfter2Seconds();
+    private async deletePosts(queryString: string) {
+        await this.fetchPosts(queryString);
+        for (let p of this.posts) {
+            this.currentComment = {
+                action: `Deleting Post titled ${p.title}\nposted to the subreddit: ${p.subreddit}`
             }
-            this.setup();
-        } else {
-            this.currentComment.action = "All Posts were deleted. Feedback -> r/NukeRedditHistory";
-            alert(`No more posts found. Nuke Reddit History tried it's best to delete all posts.\nFor feedback or error resolution, please start a thread on /r/NukeRedditHistory`);
+            await this.deletePost(p);
+            this.currentComment.action = `Performing Checks....`;
+            if (!p.isDeleted) {
+                // repeat current sort order on failure
+                this.deletePosts(queryString);
+                 break;
+            }
+            await utils.resolveAfter2Seconds();
         }
-        
+        this.setup();
     }
 
-    public async fetchPosts() {
+    public async fetchPosts(queryString: string) {
         this.posts = [];
-        const r = await networkRequests.getPosts(this.userName);
+        const r = await networkRequests.getPosts(this.userName, queryString);
         for (let rp of r.data.children) {
             const p = new Post(rp);
             this.posts.push(p);

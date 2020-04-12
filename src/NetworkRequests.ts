@@ -21,9 +21,9 @@ export let networkRequests: any = {
             console.log(`Fetching User Information failed with Error ${e}`)
         })
     },
-    getComments: (username: string): AxiosPromise => {
+    getComments: (username: string, queryString: string): AxiosPromise => {
         return REDDIT_API
-        .get(`user/${username}/comments/.json`)
+        .get(`user/${username}/comments/.json${queryString || ''}`)
         .then(r => r.data)
         .catch((e: AxiosError) => {
             console.log(`Fetching comments failed with Error ${e}`)
@@ -35,8 +35,8 @@ export let networkRequests: any = {
     deleteRedditThing: (data: any, uh: string) => {
         return REDDIT_API.post('api/del', qs.stringify(data), {headers: {'X-Modhash': uh}});
     },
-    getPosts: (username: string): AxiosPromise => {
-        return REDDIT_API.get(`user/${username}/submitted/.json`)
+    getPosts: (username: string, queryString: string): AxiosPromise => {
+        return REDDIT_API.get(`user/${username}/submitted/.json${queryString || ''}`)
         .then(r => r.data)
         .catch((e: AxiosError) => {
             console.log(`Fetching posts failed with Error Code ${e}`)
