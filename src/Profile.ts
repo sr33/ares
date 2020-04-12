@@ -55,8 +55,8 @@ export default class Profile {
             }
             this.currentComment.action = "Performing checks..."
             await utils.resolveAfter2Seconds();
-            this.setup();
         }
+        this.setup();
     }
 
     public async setup() {
