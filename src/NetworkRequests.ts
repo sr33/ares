@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig, AxiosPromise, AxiosInstance, AxiosError } fr
 import * as qs from 'qs';
 
 const config: AxiosRequestConfig = {
-    timeout: 1000,
+    timeout: 10000,
     headers: {
         'Accept': '*/*',
     },
