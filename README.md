@@ -30,5 +30,7 @@ Browser Extension that automates api requests to overwrite & delete comments, de
 1. click `[Load Temporary Add-on]`
 1. navigate to `/dist` and click select.
 
+## Support the dev
+Bitcoin: 38w6mRC7ZyPnyQxmfiQCd6so3xhrmmZHgH
 
-
+[Patreon](https://www.patreon.com/user?u=9592583)
