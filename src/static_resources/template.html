@@ -2,18 +2,27 @@
 
 <div id="nrhApp">
     
-    <h1 class="text-center nuke-color">Nuke Reddit History</h1>
+    <h1 class="text-center nuke-color m-b-md">Nuke Reddit History</h1>
     
-    <!-- <div class="font-size-2x text-center">
-        Please do not use reddit while this extension is running!
-    </div> -->
-
-    <div class="font-size-2x text-center">
-        username: {{profile.userName}}
+    <div class="columns">
+        <div class="column-1 font-size-1_5x">
+            <ul class="bottom-border m-b-md">
+                <li class="m-b-md">
+                    <span class="nuke-color">Username:</span> {{profile.userName}}
+                </li>
+                <li>
+                    <span class="nuke-color">Action:</span> Deleting {{profile.mode}}
+                </li>
+            </ul>
+            <ul>
+                <li v-for="(s, i) in profile.sort" :key="s" :class="(profile.sortIndex>=i)? 'nuke-color': 'disabled-text'">
+                    {{ profile.getHumanizedSort(s) }}
+                </li>
+            </ul>
+        </div>
         
-        <div>
-            <br>
-            <span class="nuke-color">{{profile.currentComment.action}}</span>
+        <div class="column-2">
+            <span class="nuke-color font-size-2x">{{profile.currentComment.action}}</span>
             <span v-if="profile.currentComment.comment">
                 <br>
                 `{{profile.currentComment.comment.body}}`
@@ -34,13 +43,25 @@
         font-family: 'Avenir', Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-
     }
 
     h1 {
         font-size: 300%;
     }
 
+    .columns {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .column-1 {
+        flex: 1;
+    }
+
+    .column-2 {
+        flex: 2;
+    }
+    
     .nuke-color {
         color: #fa8231;
     }
@@ -48,8 +69,25 @@
     .text-center {
         text-align: center;
     }
-
+    .font-size-1_5x {
+        font-size: 150%
+    }
     .font-size-2x {
         font-size: 200%;
+    }
+    .m-b-md {
+        margin-bottom: 1rem;
+    }
+
+    .m-l-md {
+        margin-left: 1rem;
+    }
+
+    .bottom-border {
+        border-bottom: grey;
+    }
+
+    .disabled-text {
+        color: grey;
     }
 </style>
