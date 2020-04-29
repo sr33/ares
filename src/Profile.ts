@@ -62,7 +62,8 @@ export default class Profile {
     public async setup() {
         if (this.sortIndex >= this.sort.length) {
             this.currentComment.action = `All ${this.mode} deleted!`
-            alert(`Nuke Reddit History tried it's best to delete all ${this.mode}.\nFor Error resolution, please make a post on the subreddit r/NukeRedditHistory`);
+            this.currentComment.comment = undefined;
+            // alert(`Nuke Reddit History tried it's best to delete all ${this.mode}.\nFor Error resolution, please make a post on the subreddit r/NukeRedditHistory`);
             return
         }
         console.log(`Sort Order -> ${this.sort[this.sortIndex]}`);
@@ -144,6 +145,15 @@ export default class Profile {
         } catch (e) {
             utils.onNetworkError(e);
         }
+    }
+
+    public getHumanizedSort(sort: string) {
+        const params = new URLSearchParams(sort);
+        let humanizedSort = ''
+        params.forEach((value: string, key: string) => {
+            humanizedSort = `${humanizedSort} ${key}: ${value}`
+        })
+        return humanizedSort;
     }
 
 }
