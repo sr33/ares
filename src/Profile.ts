@@ -2,6 +2,11 @@ import { networkRequests } from './NetworkRequests';
 import * as utils from './utils.js';
 import { AxiosPromise, AxiosError } from 'axios';
 
+enum Mode {
+    posts = 'posts',
+    comments = 'comments'
+}
+
 export default class Profile {
     private userName: string = '..loading';
     private comments: Comment[] = [];
@@ -11,7 +16,7 @@ export default class Profile {
         action: '..loading',
         comment: ''
     };
-    private mode!: 'posts' | 'comments';
+    private mode!: Mode;
     private sortIndex: number = 0;
     private sort = [
         '?sort=new',
@@ -66,17 +71,19 @@ export default class Profile {
             // alert(`Nuke Reddit History tried it's best to delete all ${this.mode}.\nFor Error resolution, please make a post on the subreddit r/NukeRedditHistory`);
             return
         }
-        console.log(`Sort Order -> ${this.sort[this.sortIndex]}`);
         const r = await networkRequests.getUserDetails();
         this.userName = r.data.name;
         this.modhash = r.data.modhash;
-        if (document.URL.includes('submitted')) {
-            this.mode = 'posts';
-            this.deletePosts(this.sort[this.sortIndex]);
+        // determine mode from url params
+        const urlParams = new URLSearchParams(window.location.search);
+        this.mode = urlParams.get('mode') as Mode;
+        const curSort = this.sort[this.sortIndex];
+
+        if (this.mode === Mode.posts) {
+            this.deletePosts(curSort);
         }
-        else if (document.URL.includes('comments')) {
-            this.mode = 'comments';
-            this.overwriteAndDelComments(this.sort[this.sortIndex]);
+        else if (this.mode === Mode.comments) {
+            this.overwriteAndDelComments(curSort);
         }
         this.sortIndex++;        
     }

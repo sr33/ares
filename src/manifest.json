@@ -20,8 +20,8 @@
     ],
     "content_scripts": [
       {
-        "matches": ["https://*.reddit.com/user/*"],
-        "include_globs": ["https://*.reddit.com/user/*/*/*?efe2d409a42=f9ce4f81e6326*"],
+        "matches": ["https://*.reddit.com/nuke-reddit-history/*"],
+        "include_globs": ["https://*.reddit.com/nuke-reddit-history/?efe2d409a42=f9ce4f81e6326*"],
         "run_at": "document_idle",
         "js": ["Nuke-Reddit-History.js"]
       }
