@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="src/static_resources/icons/icon440X280.png" alt="Nuke Reddit History Logo">
+</p>
+
 # ares
 Browser Extension that automates api requests to overwrite & delete comments, delete posts on reddit.
 
