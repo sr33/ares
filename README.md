@@ -12,8 +12,8 @@ Browser Extension that automates api requests to overwrite & delete comments, de
 [Firefox Add on](https://addons.mozilla.org/en-US/firefox/addon/nukereddithistory/)
 
 ## Requirements
-
-* npm
+1. [node](https://www.npmjs.com/get-npm)
+1. [npm](https://www.npmjs.com/get-npm)
 
 ## Setup
     npm install
