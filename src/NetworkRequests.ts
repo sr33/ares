@@ -13,14 +13,7 @@ const config: AxiosRequestConfig = {
 const REDDIT_API: AxiosInstance = axios.create(config);
 
 export let networkRequests: any = {
-    getUserDetails: (): AxiosPromise => {
-        return REDDIT_API
-        .get('api/me.json')
-        .then(r => r.data)
-        .catch((e: AxiosError) => {
-            console.log(`Fetching User Information failed with Error ${e}`)
-        })
-    },
+    getUserDetails: (): AxiosPromise => REDDIT_API.get('api/me.json'),
     getComments: (username: string, queryString: string): AxiosPromise => {
         return REDDIT_API
         .get(`user/${username}/comments/.json${queryString || ''}`)
