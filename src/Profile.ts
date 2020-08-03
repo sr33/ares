@@ -1,7 +1,7 @@
 import { AxiosPromise, AxiosError } from "axios";
 import Swal from "sweetalert2";
 
-import { networkRequests } from "./NetworkRequests";
+import { networkRequests, handleNetworkError } from "./NetworkRequests";
 import * as utils from "./utils.js";
 
 enum Mode {
@@ -89,50 +89,20 @@ export default class Profile {
       }
       this.sortIndex++;
     } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        const status: number = error.response.status;
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-
-        if (status === 401) {
-          Swal.fire({
-            icon: "error",
-            title: "Not logged in",
-            text: "Login to reddit and try again",
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Oops ...",
-            text: `reddit responded with the error code ${status}`,
-          });
-        }
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Looks like reddit isn't responding. Please try again later",
-        });
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log("Error", error.message);
-      }
-      console.log(error.config);
+      handleNetworkError(error);
     }
   }
 
   public async fetchComments(queryString: string) {
     this.comments = [];
-    const r = await networkRequests.getComments(this.userName, queryString);
-    for (let rc of r.data.children) {
-      const c = new Comment(rc);
-      this.comments.push(c);
+    try {
+      const r = await networkRequests.getComments(this.userName, queryString);
+      for (let rc of r.data.children) {
+        const c = new Comment(rc);
+        this.comments.push(c);
+      }
+    } catch (error) {
+      handleNetworkError(error);
     }
   }
 
@@ -142,7 +112,7 @@ export default class Profile {
       comment.isEdited = response.data.success;
       return response;
     } catch (e) {
-      utils.onNetworkError(e);
+      handleNetworkError(e);
     }
   }
 
@@ -152,7 +122,7 @@ export default class Profile {
       comment.isDeleted = true; // reddit doesn't respond with success flag on delete.
       return response;
     } catch (e) {
-      utils.onNetworkError(e);
+      handleNetworkError(e);
     }
   }
 
@@ -176,10 +146,14 @@ export default class Profile {
 
   public async fetchPosts(queryString: string) {
     this.posts = [];
-    const r = await networkRequests.getPosts(this.userName, queryString);
-    for (let rp of r.data.children) {
-      const p = new Post(rp);
-      this.posts.push(p);
+    try {
+      const r = await networkRequests.getPosts(this.userName, queryString);
+      for (let rp of r.data.children) {
+        const p = new Post(rp);
+        this.posts.push(p);
+      }
+    } catch (error) {
+      handleNetworkError(error);
     }
   }
 
@@ -189,7 +163,7 @@ export default class Profile {
       post.isDeleted = true;
       return r;
     } catch (e) {
-      utils.onNetworkError(e);
+      handleNetworkError(e);
     }
   }
 
