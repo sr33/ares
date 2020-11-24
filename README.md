@@ -3,22 +3,26 @@
 </p>
 
 # ares
+
 Browser Extension that automates api requests to overwrite & delete comments, delete posts on reddit.
 
 ## Downloads
-[Chrome Extension](https://chrome.google.com/webstore/detail/nuke-reddit-history/aclagjkmidmkcdhkhlicmgkgmpgccaod/)
 
+[Chrome Extension](https://chrome.google.com/webstore/detail/nuke-reddit-history/aclagjkmidmkcdhkhlicmgkgmpgccaod/)
 
 [Firefox Add on](https://addons.mozilla.org/en-US/firefox/addon/nukereddithistory/)
 
 ## Requirements
+
 1. [node](https://www.npmjs.com/get-npm)
 1. [npm](https://www.npmjs.com/get-npm)
 
 ## Setup
+
     npm install
 
 ## Build
+
     npm run build
 
 ## Load Extension in Chromium
@@ -35,6 +39,7 @@ Browser Extension that automates api requests to overwrite & delete comments, de
 1. navigate to `/dist` and click select.
 
 ## Support the dev
+
 Bitcoin: 38w6mRC7ZyPnyQxmfiQCd6so3xhrmmZHgH
 
 [Patreon](https://www.patreon.com/user?u=9592583)

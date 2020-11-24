@@ -36,7 +36,7 @@ export default class Profile {
         '?sort=top&t=year',
         '?sort=top&t=all',
     ]
-    
+
     public async overwriteAndDelComments(queryString: string) {
         await this.fetchComments(queryString);
         for (let comment of this.comments) {
@@ -85,9 +85,9 @@ export default class Profile {
         else if (this.mode === Mode.comments) {
             this.overwriteAndDelComments(curSort);
         }
-        this.sortIndex++;        
+        this.sortIndex++;
     }
-    
+
     public async fetchComments(queryString: string) {
         this.comments = [];
         const r = await networkRequests.getComments(this.userName, queryString);
@@ -175,7 +175,7 @@ class Comment {
     public isEdited: boolean = false;
     public isDeleted: boolean = false;
 
-    constructor (redditThing: any) {
+    constructor(redditThing: any) {
         this.redditThing = redditThing;
         this.thing_id = redditThing.data.name;
         this.id = redditThing.data.id;
